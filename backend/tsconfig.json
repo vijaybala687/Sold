@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    /* Target & Module */
+    "target": "ES2020",                                  /* Modern Node.js versions support this */
+    "module": "CommonJS",                                /* Standard for Node.js backends */
+    "lib": ["ES2020"],
+    "rootDir": "./",                                     /* Allows root access for prisma/seed.ts */
+    "baseUrl": "./",
+
+    /* Strictness - Critical for Portfolio Quality */
+    "strict": true,                                      /* Enable all strict type-checking options */
+    "noImplicitAny": true,                               /* Ensure every variable is typed */
+    "strictNullChecks": true,                            /* Prevent "null is not an object" errors */
+    "alwaysStrict": true,
+
+    /* Module Resolution */
+    "moduleResolution": "node",
+    "esModuleInterop": true,                             /* Allows importing non-TS modules like 'cors' */
+    "resolveJsonModule": true,                           /* REQUIRED: to import your players.json file */
+    "skipLibCheck": true,                                /* Faster builds */
+    "forceConsistentCasingInFileNames": true,            /* Avoid Linux/Windows naming issues */
+
+    /* Output */
+    "outDir": "./dist",                                  /* Where compiled code goes */
+    "removeComments": true,
+    "sourceMap": true                                    /* Helpful for debugging */
+  },
+  "include": [
+    "src/**/*",                                          /* Your source code */
+    "prisma/seed.ts"                                     /* Your database seed script */
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

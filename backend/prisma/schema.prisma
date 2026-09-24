@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id              Int      @id @default(autoincrement())
+  name            String
+  category        String   
+  nationality     String   
+  basePriceLakhs  Int
+  imageUrl        String
+  AuctionResult   AuctionResult[]
+}
+
+model Franchise {
+  id                String   @id @default(uuid())
+  roomCode          String
+  teamName          String   
+  purseRemaining    Int      @default(12000) 
+  AuctionResult     AuctionResult[]
+}
+
+model AuctionResult {
+  id          String    @id @default(uuid())
+  player      Player    @relation(fields: [playerId], references: [id])
+  playerId    Int
+  franchise   Franchise @relation(fields: [franchiseId], references: [id])
+  franchiseId String
+  finalPrice  Int
+  timestamp   DateTime  @default(now())
+}

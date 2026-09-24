@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "Virat Kohli",
+    "category": "BAT",
+    "nationality": "IND",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/2.png"
+  },
+  {
+    "id": 2,
+    "name": "MS Dhoni",
+    "category": "WK",
+    "nationality": "IND",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/57.png"
+  },
+  {
+    "id": 3,
+    "name": "Pat Cummins",
+    "category": "BOWL",
+    "nationality": "OVS",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/446.png"
+  },
+  {
+    "id": 4,
+    "name": "Rashid Khan",
+    "category": "BOWL",
+    "nationality": "OVS",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/218.png"
+  },
+  {
+    "id": 5,
+    "name": "Hardik Pandya",
+    "category": "AR",
+    "nationality": "IND",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/54.png"
+  },
+  {
+    "id": 6,
+    "name": "Jos Buttler",
+    "category": "WK",
+    "nationality": "OVS",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/182.png"
+  },
+  {
+    "id": 7,
+    "name": "Jasprit Bumrah",
+    "category": "BOWL",
+    "nationality": "IND",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/9.png"
+  },
+  {
+    "id": 8,
+    "name": "Glenn Maxwell",
+    "category": "AR",
+    "nationality": "OVS",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/28.png"
+  },
+  {
+    "id": 9,
+    "name": "Rinku Singh",
+    "category": "BAT",
+    "nationality": "IND",
+    "base_price_lakhs": 50,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/152.png"
+  },
+  {
+    "id": 10,
+    "name": "Mitchell Starc",
+    "category": "BOWL",
+    "nationality": "OVS",
+    "base_price_lakhs": 200,
+    "image_url": "https://bcciplayerimages.s3.ap-south-1.amazonaws.com/ipl/IPLHeadshot2024/21.png"
+  }
+]
