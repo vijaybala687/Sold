@@ -1,6 +1,7 @@
 console.log("🚀 SOLD Backend: Initializing...");
 
 import Fastify from 'fastify';
+import cors from '@fastify/cors';
 import { Server } from 'socket.io';
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
@@ -9,11 +10,22 @@ import { PrismaClient } from '@prisma/client';
 dotenv.config();
 
 const fastify = Fastify({ logger: false });
+
+// 1. CORS for API
+fastify.register(cors, { 
+  origin: "http://localhost:3000" 
+});
+
 const prisma = new PrismaClient();
 const redis = new Redis(process.env.REDIS_URL!);
 
+// 2. CORS for Sockets
 const io = new Server(fastify.server, {
-  cors: { origin: "*" } 
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
 });
 
 const IPL_TEAMS = ["CSK", "MI", "RCB", "KKR", "RR", "SRH", "GT", "LSG", "DC", "PBKS"];
@@ -106,42 +118,53 @@ io.on('connection', (socket) => {
     socket.emit('room_created', roomCode);
   });
 
-  socket.on('join_room', async (roomCode) => {
+  socket.on('join_room', async (roomCode: string) => {
     socket.join(roomCode);
     const room = await redis.hgetall(`room:${roomCode}`);
     const taken = await redis.smembers(`room:${roomCode}:teams_taken`);
     socket.emit('lobby_update', { allTeams: IPL_TEAMS, teamsTaken: taken, status: room.status });
-    
-    if (room.status === 'BIDDING') {
-        socket.emit('auction_state', room);
-    }
   });
 
-  socket.on('select_team', async ({ roomCode, teamName }) => {
+  // 3. Team Selection (Switching supported)
+  socket.on('select_team', async ({ roomCode, teamName }: { roomCode: string, teamName: string }) => {
     const lockKey = `room:${roomCode}:teams_taken`;
+    const userKey = `user:${socket.id}:team`; // Temporary key to remember THIS user's team
+
+    // Check if the team is taken by SOMEONE ELSE
     const isTaken = await redis.sismember(lockKey, teamName);
-    
     if (isTaken) {
-      socket.emit('error', 'Team already taken!');
+      socket.emit('error', 'Team already taken by another owner!');
       return;
     }
 
+    // 1. Check if this user already had a team
+    const oldTeam = await redis.get(userKey);
+    if (oldTeam) {
+      // Release the old team so others can pick it
+      await redis.srem(lockKey, oldTeam);
+    }
+
+    // 2. Claim the new team
     await redis.sadd(lockKey, teamName);
-    await redis.hset(`user:${socket.id}`, { teamName, roomCode });
-    
+    await redis.set(userKey, teamName, 'EX', 3600); // Remember choice for 1 hour
+
+    // 3. Broadcast the update to everyone
     const taken = await redis.smembers(lockKey);
     io.to(roomCode).emit('lobby_update', { teamsTaken: taken });
     socket.emit('team_confirmed', teamName);
+    
+    console.log(`[LOBBY] ${socket.id} switched from ${oldTeam || 'none'} to ${teamName}`);
   });
 
-  socket.on('start_auction', async (roomCode) => {
+  socket.on('start_auction', async (roomCode: string) => {
     const room = await redis.hgetall(`room:${roomCode}`);
     if (room.head === socket.id) {
+      await redis.hset(`room:${roomCode}`, "status", "BIDDING");
       await startNextPlayer(roomCode);
     }
   });
 
-  socket.on('place_bid', async ({ roomCode, teamName }) => {
+  socket.on('place_bid', async ({ roomCode, teamName }: { roomCode: string, teamName: string }) => {
     const roomKey = `room:${roomCode}`;
     const state = await redis.hgetall(roomKey);
 
@@ -161,7 +184,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => console.log('👤 Disconnected'));
 });
 
-// --- API ROUTES --- (ADED HERE AT LINE 158)
+// --- API ROUTES ---
 fastify.get('/api/squad/:teamName/:roomCode', async (request, reply) => {
   const { teamName, roomCode } = request.params as any;
   const squad = await prisma.auctionResult.findMany({
@@ -203,9 +226,7 @@ const start = async () => {
   try {
     await redis.ping();
     console.log("✅ Redis Connected");
-    
     startGlobalTimer();
-
     await fastify.listen({ port: 8080, host: '0.0.0.0' });
     console.log(`✅ SOLD Backend Live on Port 8080`);
   } catch (err) {
