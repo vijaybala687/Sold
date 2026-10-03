@@ -128,7 +128,7 @@ export default function SoldApp() {
               {lobbyTeams.map(team => (
                 <button 
                   key={team}
-                  disabled={takenTeams.includes(team) || myTeam !== ""}
+                  disabled={takenTeams.includes(team) || myTeam !== team}
                   onClick={() => handleSelectTeam(team)}
                   className={`p-6 rounded-2xl border-2 transition-all ${
                     myTeam === team ? 'border-blue-500 bg-blue-500/20' : 
